@@ -1,0 +1,25 @@
+# Environment variables
+.env
+
+# Docker volumes
+valheim-data/
+valheim-backups/
+valheim-server/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Backup files
+*.tar.gz
+backups/

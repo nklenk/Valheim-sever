@@ -1,0 +1,64 @@
+name: Deploy Valheim Server
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            set -e
+            
+            # Navigate to deployment directory
+            cd /opt/valheim-server || exit 1
+            
+            # Pull latest changes
+            echo "Pulling latest changes..."
+            git pull origin main
+            
+            # Copy environment file if it doesn't exist
+            if [ ! -f .env ]; then
+              echo "Creating .env file from example..."
+              cp .env.example .env
+              echo "WARNING: Please edit .env file with your server configuration!"
+            fi
+            
+            # Build and restart the container
+            echo "Building Docker image..."
+            docker-compose build --no-cache
+            
+            echo "Restarting Valheim server..."
+            docker-compose down
+            docker-compose up -d
+            
+            # Show status
+            echo "Deployment complete!"
+            docker-compose ps
+            
+            # Show logs
+            echo "Recent logs:"
+            docker-compose logs --tail=50
+      
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed!"
+          fi

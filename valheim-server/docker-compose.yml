@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  valheim-server:
+    build: .
+    image: valheim-server:latest
+    container_name: valheim-server
+    restart: unless-stopped
+    
+    environment:
+      - TZ=America/Chicago
+      - SERVER_NAME=${SERVER_NAME:-My Valheim Server}
+      - WORLD_NAME=${WORLD_NAME:-Dedicated}
+      - SERVER_PASSWORD=${SERVER_PASSWORD}
+      - SERVER_PUBLIC=${SERVER_PUBLIC:-0}
+      - SERVER_PORT=${SERVER_PORT:-2456}
+      - BACKUP_ENABLED=${BACKUP_ENABLED:-true}
+      - BACKUP_INTERVAL=${BACKUP_INTERVAL:-3600}
+      - BACKUP_RETENTION=${BACKUP_RETENTION:-7}
+    
+    ports:
+      - "${SERVER_PORT:-2456}:2456/udp"
+      - "${SERVER_PORT:-2456}:2456/tcp"
+      - "2457:2457/udp"
+      - "2458:2458/udp"
+    
+    volumes:
+      - valheim-data:/home/valheim/.config/unity3d/IronGate/Valheim
+      - valheim-backups:/home/valheim/backups
+      - valheim-server:/home/valheim/valheim-server
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 6G
+        reservations:
+          cpus: '1'
+          memory: 4G
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  valheim-data:
+    driver: local
+  valheim-backups:
+    driver: local
+  valheim-server:
+    driver: local
