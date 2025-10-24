@@ -16,19 +16,19 @@ fi
 # Start backup service in background if enabled
 if [ "${BACKUP_ENABLED}" = "true" ]; then
     echo "Backup service enabled (interval: ${BACKUP_INTERVAL}s, retention: ${BACKUP_RETENTION} days)"
-    /home/valheim/backup.sh &
+    /home/steam/backup.sh &
 fi
 
 # Update server to latest version
 echo "Checking for server updates..."
 /home/steam/steamcmd/steamcmd.sh \
-    +force_install_dir /home/valheim/valheim-server \
+    +force_install_dir /home/steam/valheim-server \
     +login anonymous \
     +app_update 896660 validate \
     +quit
 
 echo "Starting Valheim server..."
-cd /home/valheim/valheim-server
+cd /home/steam/valheim-server
 
 # Start the server
 exec ./valheim_server.x86_64 \
@@ -37,5 +37,5 @@ exec ./valheim_server.x86_64 \
     -world "${WORLD_NAME}" \
     -password "${SERVER_PASSWORD}" \
     -public ${SERVER_PUBLIC} \
-    -savedir "/home/valheim/.config/unity3d/IronGate/Valheim" \
+    -savedir "/home/steam/.config/unity3d/IronGate/Valheim" \
     -logFile /dev/stdout

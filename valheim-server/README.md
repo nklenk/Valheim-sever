@@ -112,11 +112,11 @@ The workflow automatically deploys when:
 
 Backups are automatically created based on your configuration:
 
-- **Location**: `/home/valheim/backups` (inside container)
-- **Access backups**: `docker-compose exec valheim-server ls -lh /home/valheim/backups`
+- **Location**: `/home/steam/backups` (inside container)
+- **Access backups**: `docker-compose exec valheim-server ls -lh /home/steam/backups`
 - **Extract backup**: 
   ```bash
-  docker cp valheim-server:/home/valheim/backups/<backup-file>.tar.gz .
+  docker cp valheim-server:/home/steam/backups/<backup-file>.tar.gz .
   ```
 
 ### Restore from Backup

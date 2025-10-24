@@ -1,7 +1,7 @@
 #!/bin/bash
 
-BACKUP_DIR="/home/valheim/backups"
-WORLD_DIR="/home/valheim/.config/unity3d/IronGate/Valheim/worlds"
+BACKUP_DIR="/home/steam/backups"
+WORLD_DIR="/home/steam/.config/unity3d/IronGate/Valheim/worlds"
 BACKUP_INTERVAL=${BACKUP_INTERVAL:-3600}
 BACKUP_RETENTION=${BACKUP_RETENTION:-7}
 

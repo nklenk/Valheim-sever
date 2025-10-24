@@ -8,26 +8,27 @@ RUN apt-get update && apt-get install -y \
     jq \
     && rm -rf /var/lib/apt/lists/*
 
-# Create Valheim user and directories
-RUN useradd -m -u 1000 valheim && \
-    mkdir -p /home/valheim/valheim-server /home/valheim/.config/unity3d/IronGate/Valheim /home/valheim/backups && \
-    chown -R valheim:valheim /home/valheim
+# The base image already has a 'steam' user with UID 1000
+# We'll use that user and set up the directories
+USER steam
+WORKDIR /home/steam
 
-# Switch to valheim user
-USER valheim
-WORKDIR /home/valheim
+# Create necessary directories
+RUN mkdir -p /home/steam/valheim-server \
+             /home/steam/.config/unity3d/IronGate/Valheim \
+             /home/steam/backups
 
 # Install Valheim Dedicated Server
 RUN /home/steam/steamcmd/steamcmd.sh \
-    +force_install_dir /home/valheim/valheim-server \
+    +force_install_dir /home/steam/valheim-server \
     +login anonymous \
     +app_update 896660 validate \
     +quit
 
 # Copy scripts
-COPY --chown=valheim:valheim scripts/start-server.sh /home/valheim/start-server.sh
-COPY --chown=valheim:valheim scripts/backup.sh /home/valheim/backup.sh
-RUN chmod +x /home/valheim/start-server.sh /home/valheim/backup.sh
+COPY --chown=steam:steam scripts/start-server.sh /home/steam/start-server.sh
+COPY --chown=steam:steam scripts/backup.sh /home/steam/backup.sh
+RUN chmod +x /home/steam/start-server.sh /home/steam/backup.sh
 
 # Expose ports
 # 2456-2457: Game ports (UDP)
@@ -39,6 +40,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD pgrep -f "valheim_server.x86_64" || exit 1
 
 # Volume for world data and backups
-VOLUME ["/home/valheim/.config/unity3d/IronGate/Valheim", "/home/valheim/backups"]
+VOLUME ["/home/steam/.config/unity3d/IronGate/Valheim", "/home/steam/backups"]
 
-CMD ["/home/valheim/start-server.sh"]
+CMD ["/home/steam/start-server.sh"]

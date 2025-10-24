@@ -25,9 +25,9 @@ services:
       - "2458:2458/udp"
     
     volumes:
-      - valheim-data:/home/valheim/.config/unity3d/IronGate/Valheim
-      - valheim-backups:/home/valheim/backups
-      - valheim-server:/home/valheim/valheim-server
+      - valheim-data:/home/steam/.config/unity3d/IronGate/Valheim
+      - valheim-backups:/home/steam/backups
+      - valheim-server:/home/steam/valheim-server
     
     deploy:
       resources:
